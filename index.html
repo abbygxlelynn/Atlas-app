@@ -1,0 +1,530 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#101010">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="ATLAS">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<link rel="icon" href="icon-192.png">
+<title>ATLAS — Rebuild</title>
+<script>try{document.documentElement.dataset.theme=localStorage.getItem("atlas_theme")||"dark"}catch(e){}</script>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#101010;--surface:#1a1a1a;--surface2:#222;--surface3:#2c2c2c;--text:#f2efe9;--muted:#a7a39c;--line:#393733;--mint:#ece7db;--blue:#b9b7b1;--gold:#ece7db;--red:#d58e87;--safe-bottom:env(safe-area-inset-bottom,0px)}
+*{box-sizing:border-box}html{background:var(--bg);scroll-behavior:smooth}body{margin:0;background:linear-gradient(180deg,#171716 0%,#101010 45%,#0c0c0c 100%);color:var(--text);font:15px -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;min-height:100vh;padding-bottom:calc(94px + var(--safe-bottom));-webkit-font-smoothing:antialiased}
+button,input,select,textarea{font:inherit}button{cursor:pointer}
+.topbar{max-width:760px;margin:auto;padding:calc(19px + env(safe-area-inset-top,0px)) 19px 17px;display:flex;align-items:center;justify-content:space-between;gap:12px}
+.brand{font-size:11px;letter-spacing:3px;font-weight:750;color:#ece7db}.date-line{font-size:12px;color:var(--muted);margin-top:6px}.status-chip{font-size:9px;letter-spacing:1.2px;color:#ece7db;background:#29261f;border:1px solid #4b4436;padding:8px 11px;border-radius:30px;font-weight:750;white-space:nowrap}
+main{max-width:760px;margin:auto;padding:0 17px 26px}.page{display:none;animation:appear .2s ease}.page.active{display:block}@keyframes appear{from{opacity:.45;transform:translateY(3px)}to{opacity:1;transform:none}}
+h1{font-size:27px;letter-spacing:-1px;font-weight:650;margin:7px 0 5px}h2{font-size:16px;font-weight:650;margin:0 0 15px;letter-spacing:-.25px}h3{font-size:13px;margin:0 0 12px;color:#e7e2d9}.page-intro{font-size:12px;color:var(--muted);margin:0 0 19px;line-height:1.5}
+.card{background:linear-gradient(145deg,#20201e,#191918);border:1px solid #373530;border-radius:21px;padding:18px;margin-bottom:13px;min-width:0;box-shadow:0 8px 24px #00000018}.card.hero{background:linear-gradient(135deg,#29271f,#1d1d1b 72%);border-color:#514938}
+.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}.stat{background:#191918;border:1px solid #34322e;border-radius:17px;padding:15px 14px;min-width:0}.eyebrow{font-size:9px;text-transform:uppercase;letter-spacing:1.35px;color:#aaa59b;font-weight:750}.value{font-size:26px;font-weight:650;letter-spacing:-1.1px;margin:8px 0 3px;overflow-wrap:anywhere}.sub{font-size:11px;color:var(--muted)}.mint{color:#e0d0b0}.gold{color:#ece7db}.muted{color:var(--muted)}
+.row{display:flex;align-items:center;justify-content:space-between;gap:10px}.row.wrap{flex-wrap:wrap}.stack{display:grid;gap:10px}.two{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.progress{height:5px;border-radius:20px;background:#3a3833;overflow:hidden;margin:13px 0 9px}.progress span{display:block;height:100%;width:0;background:#ece7db;border-radius:20px;transition:width .2s}
+.btn{border:1px solid #ece7db;border-radius:13px;padding:12px 16px;background:#ece7db;color:#171613;font-size:12px;letter-spacing:.15px;font-weight:800;min-height:46px}.btn.secondary{background:#292825;border:1px solid #4b4943;color:#e8e4dc}.btn.danger{background:#332523;border:1px solid #63423d;color:#e7b0a8}.btn.small{padding:8px 11px;min-height:35px;font-size:11px}.btn.full{width:100%}
+.actions{display:flex;gap:9px;flex-wrap:wrap;margin-top:13px}
+label.field{display:grid;gap:7px;font-size:10px;letter-spacing:.25px;color:#b7b1a7;min-width:0}input,select,textarea{width:100%;min-width:0;background:#111110;border:1px solid #41403a;border-radius:12px;padding:13px;color:var(--text);outline:none;font-size:14px}input:focus,select:focus,textarea:focus{border-color:#b9a987;box-shadow:0 0 0 2px #b9a98720}textarea{resize:vertical;min-height:94px;line-height:1.5}.formgrid{display:grid;grid-template-columns:1fr 1fr;gap:12px}.full{grid-column:1/-1}
+.checklist{display:grid;gap:8px}.checkrow{display:flex;align-items:center;gap:11px;padding:13px;background:#171716;border:1px solid #34332e;border-radius:13px;font-size:12px;color:#e4e0d8}.checkrow input{width:18px;height:18px;accent-color:#ece7db;flex:0 0 auto}
+.list-item{padding:13px 0;border-bottom:1px solid #373530}.list-item:last-child{border-bottom:0}.tiny{font-size:11px;color:var(--muted);line-height:1.55}.tag{font-size:9px;letter-spacing:.7px;padding:6px 9px;border-radius:30px;background:#302e29;border:1px solid #464239;color:#e2d4b9;white-space:nowrap}
+.quote{font-size:19px;font-weight:650;line-height:1.45;letter-spacing:-.35px;margin:15px 0 9px;color:#f1ece2}.notice{font-size:11px;color:#b6b0a5;line-height:1.6;padding:13px;background:#171715;border:1px solid #34322c;border-radius:13px;margin-top:11px}
+.bottom-nav{position:fixed;z-index:20;bottom:0;left:0;right:0;padding:10px 9px calc(10px + var(--safe-bottom));background:#151514f5;border-top:1px solid #393732;backdrop-filter:blur(20px);display:grid;grid-template-columns:repeat(5,1fr);gap:4px}
+.nav-btn{border:0;background:transparent;color:#9a968e;border-radius:13px;padding:8px 2px 6px;display:flex;flex-direction:column;align-items:center;gap:5px;font-size:9px;font-weight:700;min-width:0;letter-spacing:.2px}
+.nav-btn .ico{font-size:18px;line-height:1.1;color:#b4afa5}.nav-btn.active{color:#e3d2b2;background:#302d26}.nav-btn.active .ico{color:#e3d2b2}
+.chips{display:flex;flex-wrap:wrap;gap:8px}.chip{border:1px solid #4b4943;background:#292825;color:#e8e4dc;border-radius:30px;padding:10px 15px;font-size:12px;min-height:44px}.chip[aria-pressed=true]{background:#ece7db;color:#171613;border-color:#ece7db;font-weight:700}summary{cursor:pointer;min-height:24px;font-size:13px;font-weight:600}textarea{resize:vertical}
+.clock{text-align:center}.clock .row{text-align:left}.clock-time{font-size:46px;font-weight:300;letter-spacing:-1.5px;margin:14px 0 2px;font-variant-numeric:tabular-nums;color:#f1ece2}
+.clock-big{font-size:30px;font-weight:600;letter-spacing:-.5px;font-variant-numeric:tabular-nums;color:#ece7db;margin-top:4px}.clock-sec{margin-top:16px;padding-top:16px;border-top:1px solid #34322c}
+.clock .actions{justify-content:center}.btn.big{min-height:56px;font-size:14px;flex:1 1 140px}
+.modal{position:fixed;inset:0;z-index:40;background:#000000a8;display:flex;align-items:flex-end;justify-content:center}
+.sheet{width:100%;max-width:520px;background:#1a1a19;border:1px solid #3b3934;border-radius:22px 22px 0 0;padding:20px 18px calc(20px + env(safe-area-inset-bottom,0px));max-height:90vh;overflow:auto;text-align:left}
+.err{color:#d58e87;font-size:12px;margin-top:10px;min-height:16px}
+.streak{display:flex;align-items:baseline;gap:9px;margin:12px 0 4px}.streak b{font-size:40px;font-weight:700;color:#ece7db;letter-spacing:-1px}.streak span{font-size:11px;letter-spacing:1.5px;text-transform:uppercase;color:#a9adb1}.checkrow .btn.small{min-height:34px;padding:4px 10px}
+.empty{color:var(--muted);font-size:12px;padding:14px 0}.section-gap{margin-top:13px}.hidden{display:none!important}
+@media(min-width:650px){.grid{grid-template-columns:repeat(4,minmax(0,1fr))}.topbar{padding-top:23px}.bottom-nav{max-width:760px;left:50%;right:auto;transform:translateX(-50%);width:100%;border:1px solid #393732;border-bottom:0;border-radius:20px 20px 0 0}}
+@media(max-width:370px){main{padding-left:12px;padding-right:12px}.card{padding:15px}.value{font-size:23px}.nav-btn{font-size:8px}}
+
+/* editorial minimal / soft monochrome / light variant */
+body{font-family:Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;line-height:1.6;background:#0d0d0c}
+h1,h2,.clock-time,.streak b,.value,.clock-big,.quote{font-family:"Cormorant Garamond",Georgia,serif;font-weight:500;font-variant-numeric:lining-nums tabular-nums}
+h1{font-size:42px;letter-spacing:-.8px;line-height:1.05}h2{font-size:25px}.page-intro{color:#a9adb1}
+.card,.stat,.sheet{background:#151514;border:0;box-shadow:none;border-radius:24px}.card{padding:24px;margin-bottom:24px}
+.list-item{background:transparent;border:0;border-bottom:1px solid #2b2a27;border-radius:0;padding-left:0;padding-right:0}
+input,select,textarea{background:#0f0f0e;border-color:#2a2926}
+.btn{background:#d6c6a5;border-color:#d6c6a5;color:#161512}.btn.secondary{background:transparent;color:#d6c6a5;border-color:#3a3833}.btn.danger{background:transparent}
+a{color:#d6c6a5}.progress{background:#262522}.progress span{background:#d6c6a5}.chip[aria-pressed=true]{background:#d6c6a5;border-color:#d6c6a5}
+.page>*{opacity:0;transform:translateY(10px);transition:opacity 1.1s ease,transform 1.1s ease}.page>*.in{opacity:1;transform:none}
+@media(prefers-reduced-motion:reduce){.page>*{opacity:1;transform:none;transition:none}}
+:root[data-theme=light]{--bg:#f5f1e8;--text:#1f1d1a;--muted:#6f6a61;--line:#d9d2c3}
+[data-theme=light] html,[data-theme=light] body{background:#f5f1e8;color:#1f1d1a}
+[data-theme=light] .card,[data-theme=light] .stat,[data-theme=light] .sheet{background:#ece6d8}
+[data-theme=light] input,[data-theme=light] select,[data-theme=light] textarea{background:#f9f6ef;border-color:#d9d2c3;color:#1f1d1a}
+[data-theme=light] .btn{background:#2a2824;border-color:#2a2824;color:#f5f1e8}[data-theme=light] .btn.secondary{background:transparent;color:#2a2824;border-color:#c9c1b0}
+[data-theme=light] .list-item{border-bottom-color:#d9d2c3}[data-theme=light] .tiny,[data-theme=light] .page-intro,[data-theme=light] .eyebrow,[data-theme=light] summary{color:#6f6a61}
+[data-theme=light] h1,[data-theme=light] h2,[data-theme=light] .clock-time,[data-theme=light] .clock-big,[data-theme=light] .streak b,[data-theme=light] .mint,[data-theme=light] .gold,[data-theme=light] .value,[data-theme=light] .quote,[data-theme=light] b{color:#1f1d1a}
+[data-theme=light] .progress{background:#d9d2c3}[data-theme=light] .progress span{background:#2a2824}
+[data-theme=light] .chip{background:#ece6d8;color:#1f1d1a;border-color:#d9d2c3}[data-theme=light] .chip[aria-pressed=true]{background:#2a2824;color:#f5f1e8}
+[data-theme=light] .bottom-nav,[data-theme=light] .topbar{background:#f5f1e8ee;border-color:#d9d2c3}[data-theme=light] .nav-btn{color:#6f6a61}[data-theme=light] .nav-btn.active{color:#1f1d1a;background:#e4ddcc}
+[data-theme=light] .brand{color:#1f1d1a}[data-theme=light] .status-chip{background:#2a2824;color:#f5f1e8;border-color:#2a2824}[data-theme=light] .nav-btn .ico{color:#6f6a61}[data-theme=light] .nav-btn.active .ico{color:#1f1d1a}
+[data-theme=light] .modal{background:#00000045}[data-theme=light] .tag{background:#e4ddcc;color:#1f1d1a;border-color:#d9d2c3}
+</style>
+</head>
+<body>
+<header class="topbar">
+ <div><div class="brand">ATLAS  /  REBUILD</div><div class="date-line" id="todayLabel"></div></div>
+ <div class="status-chip">ONE DAY AT A TIME</div>
+</header>
+<main>
+<section class="page active" id="home">
+ <div class="card hero">
+  <div class="row"><span class="eyebrow mint">DAILY RESET</span><span class="tag" id="quoteDay">TODAY</span></div>
+  <div class="quote" id="dailyQuote"></div><div class="tiny" id="quotePrompt"></div>
+ </div>
+ <div class="card" id="coachCard">
+  <div class="row"><span class="eyebrow mint">COACH</span><span class="tag" id="coachTone">ENCOURAGING</span></div>
+  <div class="quote" id="coachMsg" style="font-size:16px"></div><div class="tiny" id="coachSub"></div>
+ </div>
+ <div class="card clock" id="clockCard">
+  <div class="row"><span class="eyebrow mint">TIME CLOCK</span><span class="tag" id="clockStatus">CLOCKED OUT</span></div>
+  <div class="clock-time" id="clockNow">--:--</div><div class="tiny" id="clockDate"></div>
+  <div class="clock-sec"><div class="eyebrow">Time worked</div><div class="clock-big" id="clockWorked">00:00:00</div><div class="tiny" id="clockMeta">Not clocked in.</div></div>
+  <div class="clock-sec hidden" id="breakBox"><div class="eyebrow">Break remaining</div><div class="clock-big" id="breakLeft">45:00</div><div class="progress"><span id="breakBar"></span></div></div>
+  <div class="actions" id="clockButtons"></div>
+  <div class="actions"><button class="btn secondary small" id="forgotBtn">Forgot to clock in?</button><button class="btn secondary small hidden" id="editActiveBtn">Edit this session</button></div>
+  <details class="section-gap" style="text-align:left"><summary>Recent sessions</summary><div id="sessionList"></div></details>
+ </div>
+ <div class="card">
+  <div class="row"><div><div class="eyebrow">Today after gas</div><div class="value mint" id="todayNet">$0.00</div><div class="tiny" id="netNote">Gross minus gas and expenses</div></div><span class="tag" id="dayStatus">NOT STARTED</span></div>
+  <div class="streak"><b id="streakNum">0</b><span>day streak</span></div><div class="progress"><span id="goalBar"></span></div><div class="row tiny"><span id="goalText">$0 / $0 goal</span><b id="goalPct">0%</b></div>
+ </div>
+ <div class="grid">
+  <div class="stat"><div class="eyebrow">Hours tracked</div><div class="value" id="todayHours">0.0</div><div class="sub">Time clock, or shift entries</div></div>
+  <div class="stat"><div class="eyebrow">Miles driven</div><div class="value" id="todayMiles">0</div><div class="sub" id="todayMilesSub">Business miles</div></div>
+  <div class="stat"><div class="eyebrow">Gross earnings</div><div class="value" id="todayGross">$0</div><div class="sub">Before expenses</div></div>
+  <div class="stat"><div class="eyebrow">Work days</div><div class="value" id="streak">0</div><div class="sub">This week</div></div>
+  <div class="stat"><div class="eyebrow">Per hour today</div><div class="value mint" id="todayRate">—</div><div class="sub">Gross ÷ hours</div></div>
+  <div class="stat"><div class="eyebrow">Weekly avg / hr</div><div class="value mint" id="weekRate">—</div><div class="sub">Gross ÷ hours, this week</div></div>
+ </div>
+ <div class="card">
+  <div class="row"><h2>Daily checklist</h2><span class="tag" id="checkCount">0 / 7</span></div>
+  <div class="checklist" id="dailyChecks"></div>
+  <div class="actions" style="margin-top:12px"><input id="newTask" placeholder="Add a task" aria-label="New task"><button class="btn small" id="addTask">Add</button></div>
+ </div>
+</section>
+
+<section class="page" id="earnings">
+ <h1>Earnings</h1><p class="page-intro">Know what your time and miles are actually earning.</p>
+ <div class="grid">
+  <div class="stat"><div class="eyebrow">This month gross</div><div class="value" id="monthGross">$0</div></div>
+  <div class="stat"><div class="eyebrow">After expenses</div><div class="value mint" id="monthNet">$0</div></div>
+  <div class="stat"><div class="eyebrow">Shift hours logged</div><div class="value" id="monthHours">0</div></div>
+  <div class="stat"><div class="eyebrow">Net per hour</div><div class="value" id="netHour">$0</div></div>
+ </div>
+ <div class="card section-gap"><h2>App performance</h2><div id="appCompare"></div><p class="tiny">Net = gross earnings minus expenses assigned to shifts and logged general expenses. This is not tax-adjusted profit.</p></div>
+ <div class="card"><div class="row"><h2>Shift history</h2><span class="tag" id="shiftCount">0 shifts</span></div><div id="shiftList"></div></div>
+</section>
+
+<section class="page" id="expenses">
+ <h1>Expenses</h1><p class="page-intro">Track the costs of working and the bills you need to cover.</p>
+ <div class="grid">
+  <div class="stat"><div class="eyebrow">This month expenses</div><div class="value gold" id="expenseMonth">$0</div></div>
+  <div class="stat"><div class="eyebrow">Fuel logged</div><div class="value" id="fuelMonth">$0</div></div>
+  <div class="stat"><div class="eyebrow">Monthly bills</div><div class="value" id="billTotal">$0</div></div>
+  <div class="stat"><div class="eyebrow">Month net after costs</div><div class="value mint" id="expenseNet">$0</div></div>
+ </div>
+ <div class="card section-gap"><h2>Add an expense</h2>
+  <form id="expenseForm" class="formgrid">
+   <label class="field">Expense type<select id="expenseType"><option>Gas</option><option>Food while working</option><option>Vehicle maintenance</option><option>Supplies</option><option>Phone</option><option>Other</option></select></label>
+   <label class="field">Date<input type="date" id="expenseDate" required></label>
+   <label class="field">Amount ($)<input type="number" id="expenseAmount" min=".01" step=".01" required placeholder="0.00"></label>
+   <label class="field">Related app<select id="expenseApp"><option value="">General / not app-specific</option><option>Spark</option><option>DoorDash</option><option>iVueit</option><option>Roadie</option><option>Instacart</option><option>Other</option></select></label>
+   <label class="field full">Note (optional)<input id="expenseNote" placeholder="Station, receipt detail, etc."></label>
+   <div class="full"><button class="btn full" type="submit">Save expense</button></div>
+  </form>
+ </div>
+ <div class="card"><h2>Expense history</h2><div id="expenseList"></div></div>
+ <div class="card"><h2>Monthly bills</h2><form id="billForm" class="formgrid">
+  <label class="field">Bill name<input id="billName" placeholder="Insurance" required></label>
+  <label class="field">Monthly amount ($)<input id="billAmount" type="number" min="0" step=".01" required></label>
+  <div class="full"><button class="btn full" type="submit">Add monthly bill</button></div>
+ </form><div id="billList"></div></div>
+</section>
+
+<section class="page" id="training">
+ <h1>Workout</h1><p class="page-intro">Write the plan, start the timer, change it any time.</p>
+ <div class="grid">
+  <div class="stat"><div class="eyebrow">Sessions this month</div><div class="value mint" id="workoutCount">0</div></div>
+  <div class="stat"><div class="eyebrow">Workouts logged</div><div class="value" id="totalWorkouts">0</div></div>
+ </div>
+  <div class="card section-gap clock"><div class="row"><h2>Today's workout</h2><span class="tag" id="wStatus">READY</span></div>
+  <div class="clock-big" id="wTimer" style="font-size:44px;margin:12px 0">00:00:00</div>
+  <label class="field" style="text-align:left">What I'm doing / did<textarea id="wPlan" rows="5" placeholder="e.g. 3x grip holds, 50 pushups, 3x squats. Change it anytime."></textarea></label>
+  <div class="actions"><button class="btn big" id="wToggle">Start workout</button></div></div>
+ <div class="card"><h2>Training history</h2><div id="trainList"></div><p class="notice">Keep your form controlled. Increase reps or time gradually. Stop if you feel sharp pain, numbness, or tingling.</p></div>
+</section>
+
+<section class="page" id="reset">
+ <h1>Journal & goals</h1><p class="page-intro">Write it out. Check in with how you feel.</p>
+ <div class="card hero"><div class="quote" style="font-size:26px;margin:4px 0">Remember your why</div></div>
+ <div class="card"><h2>Today's journal</h2>
+  <label class="field">Write about your day<textarea id="jEntry" rows="11" placeholder="Work, working out, how the day went, anything personal. Write whatever you need to."></textarea></label>
+  <div class="actions"><button class="btn" id="saveJournal">Save journal</button></div><div class="tiny" id="journalStatus">Saves automatically as you type.</div></div>
+ <div class="card"><h2>How are you feeling?</h2>
+  <div class="chips" id="moodChips" role="group" aria-label="How are you feeling"></div>
+  <input id="moodOther" class="hidden section-gap" type="text" maxlength="40" placeholder="Type the emotion you feel (e.g. restless, hopeful)" aria-label="Other emotion" style="margin-top:13px">
+  <label class="field section-gap">Why do I feel this way?<textarea id="moodWhy" rows="3" placeholder="What's behind it?"></textarea></label>
+  <div class="actions"><button class="btn" id="saveMood">Save check-in</button></div><div class="tiny" id="moodStatus"></div>
+  <h3 class="section-gap" style="margin-top:20px">Recent check-ins</h3><div id="moodList"></div></div>
+ <div class="card"><h2>Past journal entries</h2><div id="journalHistory"></div></div>
+ <div class="card">
+  <h2>Work targets &amp; appearance</h2>
+  <div class="formgrid">
+   <label class="field">Daily gross goal ($)<input type="number" id="dailyGoal" min="0" step="5" value="200"></label>
+   <label class="field">Hours target<input type="number" id="hoursGoal" min="1" max="16" step=".5" value="8"></label>
+   <label class="field">Miles per gallon<input type="number" id="mpg" min="5" max="80" step="0.5"></label>
+   <label class="field">Gas price ($/gal)<input type="number" id="gasPrice" min="0" step="0.01"></label>
+   <label class="field full">Minimum-day hours<input type="number" id="minimumHours" min="1" max="12" step=".5" value="4"></label>
+  </div>
+   <div class="actions" style="margin-top:14px"><button class="btn secondary" id="themeBtn">Switch to light mode</button></div>
+ </div>
+ <div class="card"><h2>Automatic cloud backup</h2><p class="tiny">Saves your data to a private GitHub repository after every change. Free.</p>
+  <label class="field">Repository (yourname/atlas-data)<input id="syncRepo" autocapitalize="off" autocorrect="off" placeholder="yourname/atlas-data"></label>
+  <label class="field section-gap">Access token<input id="syncToken" type="password" autocomplete="off" placeholder="github_pat_…"></label>
+  <div class="actions"><button class="btn" id="syncConnect">Connect</button><button class="btn secondary" id="syncNow">Save now</button><button class="btn secondary" id="syncRestore">Restore from cloud</button></div><div class="tiny" id="syncStatus">Not connected.</div></div>
+ <div class="card"><h2>Savings goal</h2><div class="grid">
+  <label class="field">Current savings ($)<input type="number" id="saved" min="0" step=".01"></label>
+  <label class="field">Target ($)<input type="number" id="target" min="1" step="100"></label>
+ </div><div class="progress"><span id="savingsBar"></span></div><div class="tiny" id="savingsProgress"></div><div class="actions"><button class="btn" id="saveSavings">Update savings</button></div></div>
+ <div class="card"><h2>Weekly review</h2><div id="weeklyReview"></div></div>
+ <div class="card"><h2>Your data & backup</h2><p class="tiny">Your information is saved in this browser on this device. Export a backup regularly, especially before changing phones or clearing browser data.</p><div class="actions"><button class="btn" id="export">Export backup</button><label class="btn secondary" style="display:inline-flex;align-items:center">Import backup<input id="import" type="file" accept="application/json" style="display:none"></label><button class="btn danger" id="resetData">Reset data</button></div><p class="tiny" id="backupStatus"></p></div>
+</section>
+</main>
+<nav class="bottom-nav" aria-label="Main navigation">
+ <button class="nav-btn active" data-page="home"><span class="ico">⌂</span><span>Today</span></button>
+ <button class="nav-btn" data-page="earnings"><span class="ico">↗</span><span>Earnings</span></button>
+ <button class="nav-btn" data-page="expenses"><span class="ico">−</span><span>Expenses</span></button>
+ <button class="nav-btn" data-page="training"><span class="ico">✦</span><span>Training</span></button>
+ <button class="nav-btn" data-page="reset"><span class="ico">◎</span><span>Goals</span></button>
+</nav>
+<div class="modal hidden" id="modal" role="dialog" aria-modal="true" aria-label="Time clock"><div class="sheet" id="sheet"></div></div>
+<script>
+'use strict';
+const KEY='atlas_rebuild_v2', OLD='atlas_rebuild_v1';
+const today=()=>{const d=new Date();return new Date(d.getTime()-d.getTimezoneOffset()*60000).toISOString().slice(0,10)};
+const blank=()=>({checklist:null,workoutRun:null,workoutPlan:{date:'',text:''},lastBackup:null,shifts:[],expenses:[],bills:[],saved:0,target:12000,checks:{},settings:{start:'05:30',cutoff:'08:00',hours:8,daily:200,minimum:4},sessions:[],training:[],vision:'',journals:{},moods:[],morningLogs:[],progression:{successes:0,stage:0},firstUse:null});
+function loadData(){try{let current=JSON.parse(localStorage.getItem(KEY));if(current)return {...blank(),...current,settings:{...blank().settings,...(current.settings||{})}};let old=JSON.parse(localStorage.getItem(OLD));if(old){let migrated={...blank(),...old,expenses:[],settings:{...blank().settings,...(old.settings||{})}};localStorage.setItem(KEY,JSON.stringify(migrated));return migrated}}catch(e){}return blank()}
+let data=loadData();
+const $=id=>document.getElementById(id), money=n=>new Intl.NumberFormat('en-US',{style:'currency',currency:'USD'}).format(Number(n)||0);
+const sum=(arr,key)=>arr.reduce((a,x)=>a+(Number(x[key])||0),0), month=()=>today().slice(0,7);
+const dateLabel=d=>new Date(d+'T12:00:00').toLocaleDateString(undefined,{month:'short',day:'numeric'});
+const escapeHTML=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+function save(){data.updatedAt=Date.now();try{localStorage.setItem(KEY,JSON.stringify(data))}catch(e){}queuePush();render()}
+/* ---- automatic cloud backup to a private GitHub repo ---- */
+const SYNC_KEY='atlas_sync',SYNC_FILE='atlas-data.json';
+let syncSha=null,syncTimer=null,syncBusy=false,syncDirty=false;
+const syncCfg=()=>{try{return JSON.parse(localStorage.getItem(SYNC_KEY))}catch(e){return null}};
+const b64=t=>btoa(unescape(encodeURIComponent(t))),unb64=t=>decodeURIComponent(escape(atob(t.replace(/\n/g,''))));
+const setSync=m=>{const el=document.getElementById('syncStatus');if(el)el.textContent=m};
+const nowT=()=>new Date().toLocaleTimeString([],{hour:'numeric',minute:'2-digit'});
+const gh=(method,body)=>{const c=syncCfg();return fetch('https://api.github.com/repos/'+c.repo+'/contents/'+SYNC_FILE,{method,cache:'no-store',headers:{Authorization:'Bearer '+c.token,Accept:'application/vnd.github+json','Content-Type':'application/json'},body})};
+const syncErr=r=>r===401||r===403?'The token was rejected. Make a new one and reconnect.':r===404?'Repository not found. Check the name and the token’s access.':'Cloud error '+r+'.';
+async function pullCloud(){const r=await gh('GET');if(r.status===404){const rr=await fetch('https://api.github.com/repos/'+syncCfg().repo,{headers:{Authorization:'Bearer '+syncCfg().token}});if(!rr.ok)throw new Error(syncErr(rr.status));syncSha=null;return null}
+ if(!r.ok)throw new Error(syncErr(r.status));const j=await r.json();syncSha=j.sha;return JSON.parse(unb64(j.content))}
+async function pushCloud(){if(!syncCfg())return;if(syncBusy){syncDirty=true;return}syncBusy=true;syncDirty=false;
+ try{const mk=()=>JSON.stringify({message:'ATLAS auto-save',content:b64(JSON.stringify(data)),...(syncSha?{sha:syncSha}:{})});
+  let r=await gh('PUT',mk());if(r.status===409||r.status===422){await pullCloud();r=await gh('PUT',mk())}
+  if(!r.ok)throw new Error(syncErr(r.status));syncSha=(await r.json()).content.sha;setSync('Saved to cloud at '+nowT()+'.')}
+ catch(e){setSync((e.message||'Cloud save failed')+' It will retry on your next change.')}
+ syncBusy=false;if(syncDirty)queuePush()}
+function queuePush(){if(!syncCfg())return;clearTimeout(syncTimer);syncTimer=setTimeout(pushCloud,2500)}
+function adoptCloud(remote){data={...blank(),...remote,settings:{...blank().settings,...(remote.settings||{})}};try{localStorage.setItem(KEY,JSON.stringify(data))}catch(e){}render();location.reload()}
+async function startSync(){if(!syncCfg())return;try{const remote=await pullCloud();
+ if(remote&&(remote.updatedAt||0)>(data.updatedAt||0)){setSync('Loading newer data from the cloud…');adoptCloud(remote)}
+ else if(!remote||(data.updatedAt||0)>(remote.updatedAt||0))await pushCloud();else setSync('Connected. Cloud is up to date ('+nowT()+').')}
+ catch(e){setSync(e.message||'Could not reach the cloud right now.')}}
+function weekStart(){let d=new Date();d.setHours(0,0,0,0);d.setDate(d.getDate()-(d.getDay()+6)%7);return new Date(d.getTime()-d.getTimezoneOffset()*60000).toISOString().slice(0,10)}
+const quotes=[
+["You don't have to feel ready. You just have to take the first step.","Get dressed, get out the door, and let momentum catch up."],
+["You are rebuilding trust with yourself one kept promise at a time.","Keep the promise to begin, even if the morning feels heavy."],
+["A hard season is not a permanent identity.","Do the next useful thing, not everything at once."],
+["Consistency is built on ordinary days.","Show up before you negotiate with yourself."],
+["Small honest progress beats an ambitious plan you never start.","Start with the minimum, then continue if you can."],
+["You are allowed to start over without starting from scratch.","Use what you've learned and take one step forward."],
+["Don't turn one late morning into a lost day.","Reset, leave, and make the remaining hours count."],
+["The goal isn't to punish yourself into success.","Work hard, eat, hydrate, and protect your sleep."],
+["Progress can be quiet: a shift completed, a bill covered, a little saved.","Record the win, however small."],
+["Motivation comes and goes. A simple routine gives you something to lean on.","Prepare what you need tonight for tomorrow."],
+["Rest is part of the plan. Avoiding the start is not the same as resting.","Get enough sleep, then honor your morning plan."],
+["You don't need to fix your whole life before breakfast.","Get up, get ready, and begin."]
+];
+function init(){
+ $('todayLabel').textContent=new Date().toLocaleDateString(undefined,{weekday:'long',month:'long',day:'numeric'});
+ const dayNum=Math.floor((new Date(new Date().getFullYear(),new Date().getMonth(),new Date().getDate())-new Date(new Date().getFullYear(),0,0))/86400000),qi=dayNum%quotes.length,q=quotes[qi]||quotes[0];
+ $('dailyQuote').textContent='“'+q[0]+'”';$('quotePrompt').textContent=q[1];$('quoteDay').textContent='DAY '+dayNum;
+ ['expenseDate'].forEach(id=>$(id).value=today());
+ document.querySelector('.bottom-nav').addEventListener('click',e=>{
+  const btn=e.target.closest('.nav-btn');
+  if(!btn)return;
+  const target=btn.getAttribute('data-page');
+  if(!target || !$(''+target))return;
+  navigate(target);
+ });
+ $('dailyChecks').addEventListener('change',e=>{const k=e.target.dataset.check;if(!k)return;data.checks[today()]??={};data.checks[today()][k]=e.target.checked;save()});
+ $('dailyChecks').addEventListener('click',e=>{const b=e.target.closest('[data-ck]');if(!b)return;const i=+b.dataset.i,l=data.checklist;
+  if(b.dataset.ck==='del'){if(!confirm('Delete this task?'))return;l.splice(i,1)}else if(b.dataset.ck==='up'){if(i<1)return;[l[i-1],l[i]]=[l[i],l[i-1]]}
+  else{const v=prompt('Rename task',l[i].text);if(!v||!v.trim())return;l[i].text=v.trim()}save()});
+ $('addTask').onclick=()=>{const v=$('newTask').value.trim();if(!v)return;data.checklist.push({id:crypto.randomUUID(),text:v});$('newTask').value='';save()};
+ if(syncCfg()){$('syncRepo').value=syncCfg().repo;setSync('Connected · saving automatically.')}
+ $('syncConnect').onclick=async()=>{const repo=$('syncRepo').value.trim().replace(/^https?:\/\/github\.com\//,''),token=$('syncToken').value.trim()||(syncCfg()||{}).token;
+  if(!/^[\w.-]+\/[\w.-]+$/.test(repo)||!token)return setSync('Enter the repository as yourname/atlas-data and paste your token.');
+  localStorage.setItem(SYNC_KEY,JSON.stringify({repo,token}));setSync('Connecting…');
+  try{const remote=await pullCloud();
+   if(remote&&confirm('Your cloud already has saved data. OK = load it onto this phone. Cancel = replace the cloud copy with what is on this phone.')){adoptCloud(remote);return}
+   await pushCloud();$('syncToken').value=''}catch(e){setSync(e.message||'Could not connect.')}};
+ $('syncNow').onclick=()=>{if(!syncCfg())return setSync('Connect first.');pushCloud()};
+ $('syncRestore').onclick=async()=>{if(!syncCfg())return setSync('Connect first.');try{const remote=await pullCloud();if(!remote)return setSync('No cloud copy found yet.');if(confirm('Replace the data on this phone with the cloud copy?'))adoptCloud(remote)}catch(e){setSync(e.message||'Could not restore.')}};
+ const setThemeLabel=()=>{const l=document.documentElement.dataset.theme==='light';$('themeBtn').textContent=l?'Switch to dark mode':'Switch to light mode';const m=document.querySelector('meta[name=theme-color]');if(m)m.content=l?'#f5f1e8':'#101010'};
+ $('themeBtn').onclick=()=>{const t=document.documentElement.dataset.theme==='light'?'dark':'light';document.documentElement.dataset.theme=t;try{localStorage.setItem('atlas_theme',t)}catch(e){}setThemeLabel()};setThemeLabel();
+ const io='IntersectionObserver' in window?new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target)}}),{threshold:.05}):null;
+ document.querySelectorAll('.page>*').forEach(el=>io?io.observe(el):el.classList.add('in'));
+ ['mpg','gasPrice'].forEach(id=>$(id).addEventListener('change',()=>{data.settings.mpg=+$('mpg').value||25;data.settings.gas=+$('gasPrice').value||0;save()}));
+ if(!data.checklist)data.checklist=[['out','Get up, get ready, and leave the house'],['morningPrayer','Morning prayer'],['start','Clock in'],['target','Complete my work target'],['train','Workout'],['review','Log earnings and expenses'],['nightPrayer','Nightly prayer']].map(([id,text])=>({id,text}));
+ try{navigator.storage&&navigator.storage.persist&&navigator.storage.persist()}catch(e){}
+ $('expenseForm').addEventListener('submit',e=>{e.preventDefault();data.expenses.push({id:crypto.randomUUID(),type:$('expenseType').value,date:$('expenseDate').value,amount:+$('expenseAmount').value,app:$('expenseApp').value,note:$('expenseNote').value});e.target.reset();$('expenseDate').value=today();save()});
+ $('billForm').addEventListener('submit',e=>{e.preventDefault();data.bills.push({id:crypto.randomUUID(),name:$('billName').value,amount:+$('billAmount').value});e.target.reset();save()});
+ const wPlanSave=()=>{data.workoutPlan={date:today(),text:$('wPlan').value};try{localStorage.setItem(KEY,JSON.stringify(data))}catch(e){}};
+ $('wPlan').addEventListener('input',wPlanSave);
+ $('wToggle').onclick=()=>{if(!data.workoutRun){data.workoutRun={start:new Date().toISOString()}}
+  else{const secs=Math.round((Date.now()-Date.parse(data.workoutRun.start))/1000),txt=$('wPlan').value.trim();data.training.push({id:crypto.randomUUID(),date:today(),exercise:txt?txt.split('\n')[0].slice(0,60):'Workout',secs,notes:txt.split('\n').slice(1).join(' ').slice(0,200)});data.workoutRun=null}save()};
+ if(data.workoutPlan&&data.workoutPlan.date===today())$('wPlan').value=data.workoutPlan.text||'';
+ ['hoursGoal','dailyGoal','minimumHours'].forEach(id=>$(id).addEventListener('change',()=>{Object.assign(data.settings,{hours:+$('hoursGoal').value,daily:+$('dailyGoal').value,minimum:+$('minimumHours').value});save()}));
+ const jIds={entry:'jEntry'},legacyKeys=['work','workout','day','personal'];
+ const saveJournal=auto=>{const cur=data.journals[today()]||{},e={...cur};let any=false;for(const k in jIds){e[k]=$(jIds[k]).value;if(e[k].trim())any=true}
+  legacyKeys.forEach(k=>delete e[k]);
+  if(!any&&!data.journals[today()]){if(!auto)$('journalStatus').textContent='Write something first.';return}
+  data.journals[today()]=e;save();$('journalStatus').textContent=(auto?'Auto-saved at ':'Saved at ')+new Date().toLocaleTimeString([],{hour:'numeric',minute:'2-digit'})+'.'};
+ let jTimer;Object.values(jIds).forEach(id=>$(id).addEventListener('input',()=>{clearTimeout(jTimer);jTimer=setTimeout(()=>saveJournal(true),700)}));
+ $('saveJournal').onclick=()=>saveJournal(false);
+ let feeling='';
+ ['Motivated','Proud','Grateful','Calm','Okay','Tired','Stressed','Anxious','Frustrated','Overwhelmed','Down','Other'].forEach(f=>{const b=document.createElement('button');b.type='button';b.className='chip';b.textContent=f;b.setAttribute('aria-pressed','false');
+  b.onclick=()=>{feeling=feeling===f?'':f;document.querySelectorAll('#moodChips .chip').forEach(x=>x.setAttribute('aria-pressed',String(x.textContent===feeling)));$('moodOther').classList.toggle('hidden',feeling!=='Other');if(feeling==='Other')$('moodOther').focus()};$('moodChips').appendChild(b)});
+ $('saveMood').onclick=()=>{if(!feeling){$('moodStatus').textContent='Pick how you feel first.';return}
+  let label=feeling;if(feeling==='Other'){label=$('moodOther').value.trim();if(!label){$('moodStatus').textContent='Type the emotion you’re feeling.';return}label=label.charAt(0).toUpperCase()+label.slice(1)}
+  data.moods.push({id:crypto.randomUUID(),date:today(),time:new Date().toISOString(),feeling:label,why:$('moodWhy').value.trim()});
+  feeling='';$('moodWhy').value='';$('moodOther').value='';$('moodOther').classList.add('hidden');document.querySelectorAll('#moodChips .chip').forEach(x=>x.setAttribute('aria-pressed','false'));save();$('moodStatus').textContent='Check-in saved.'};
+ $('moodList').addEventListener('click',e=>{const b=e.target.closest('[data-del-mood]');if(!b)return;if(confirm('Delete this check-in?')){data.moods=data.moods.filter(m=>m.id!==b.dataset.delMood);save()}});
+ $('clockButtons').addEventListener('click',e=>{const b=e.target.closest('[data-act]');if(!b)return;const act=b.dataset.act,a=activeSession();
+  if(act==='in')openMilesModal('in');else if(act==='out')openMilesModal('out');
+  else if(act==='break'&&a&&!openBreak(a)){a.breaks=a.breaks||[];a.breaks.push({start:new Date().toISOString(),end:null});save()}
+  else if(act==='endbreak'&&a){const ob=openBreak(a);if(ob){ob.end=new Date().toISOString();save()}}});
+ $('forgotBtn').onclick=()=>openSessionModal(null);
+ $('editActiveBtn').onclick=()=>{const a=activeSession();if(a)openSessionModal(a.id)};
+ $('sessionList').addEventListener('click',e=>{const b=e.target.closest('[data-edit-sess]');if(b)openSessionModal(b.dataset.editSess)});
+ $('modal').addEventListener('click',e=>{if(e.target===$('modal'))closeModal()});
+ document.addEventListener('keydown',e=>{if(e.key==='Escape')closeModal()});
+ $('saveSavings').onclick=()=>{data.saved=+$('saved').value;data.target=+$('target').value;save()};
+ $('export').onclick=async()=>{
+  const name='atlas-rebuild-backup-'+today()+'.json',text=JSON.stringify(data,null,2);
+  try{
+   const file=new File([text],name,{type:'application/json'});
+   if(navigator.canShare&&navigator.canShare({files:[file]})){await navigator.share({files:[file],title:'ATLAS backup'});$('backupStatus').textContent='Backup exported.';return}
+  }catch(err){if(err&&err.name==='AbortError'){$('backupStatus').textContent='Export cancelled.';return}}
+  try{const blob=new Blob([text],{type:'application/json'}),a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=name;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(a.href),4000);$('backupStatus').textContent='Backup exported.';data.lastBackup=new Date().toISOString()}
+  catch(err){$('backupStatus').textContent='Could not export backup.'}
+ };
+ $('import').onchange=async e=>{try{let f=e.target.files[0];if(!f)return;let v=JSON.parse(await f.text());if(!Array.isArray(v.shifts)||!Array.isArray(v.bills))throw Error();data={...blank(),...v,settings:{...blank().settings,...(v.settings||{})}};save();$('backupStatus').textContent='Backup imported.'}catch(err){$('backupStatus').textContent='Could not import that backup file.'}};
+ $('resetData').onclick=()=>{if(confirm('This permanently clears all Atlas data on this device. Export a backup first. Continue?')){data=blank();save();$('backupStatus').textContent='Data reset.'}};
+ if(!data.firstUse){const d0=data.shifts.map(s=>s.date).concat(data.expenses.map(e=>e.date)).sort();data.firstUse=d0[0]||today();try{localStorage.setItem(KEY,JSON.stringify(data))}catch(e){}}
+ const j0=data.journals[today()]||{};if(!j0.entry){const old=legacyKeys.map(k=>j0[k]).filter(v=>v&&String(v).trim()).join('\n\n');if(old)j0.entry=old}
+ for(const k in jIds)$(jIds[k]).value=j0[k]||'';
+ render();
+ setInterval(updateLiveTimer,1000);
+}
+function navigate(id){
+ const page=$(id);
+ if(!page)return;
+ document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+ document.querySelectorAll('.nav-btn').forEach(b=>b.classList.remove('active'));
+ page.classList.add('active');
+ const activeButton=document.querySelector('.nav-btn[data-page="'+id+'"]');
+ if(activeButton)activeButton.classList.add('active');
+ try{history.replaceState(null,'','#'+id)}catch(e){}
+ window.scrollTo(0,0);
+ render();
+}
+const BREAK_MS=45*60000;
+const activeSession=()=>data.sessions.slice().reverse().find(s=>!s.end);
+const openBreak=s=>(s.breaks||[]).find(b=>!b.end);
+const breakMs=(s,now)=>(s.breaks||[]).reduce((t,b)=>{const st=Date.parse(b.start),en=b.end?Date.parse(b.end):Math.min(now,st+BREAK_MS);return t+Math.max(0,en-st)},0);
+const workedMs=(s,now=Date.now())=>Math.max(0,(s.end?Date.parse(s.end):now)-Date.parse(s.start)-breakMs(s,now));
+const milesOf=s=>(s.startMiles!=null&&s.endMiles!=null&&s.endMiles>=s.startMiles)?s.endMiles-s.startMiles:0;
+const hms=ms=>{const t=Math.floor(ms/1000);return [Math.floor(t/3600),Math.floor(t%3600/60),t%60].map(n=>String(n).padStart(2,'0')).join(':')};
+const fmtTime=iso=>new Date(iso).toLocaleTimeString([],{hour:'numeric',minute:'2-digit'});
+const fmtMiles=n=>(+n).toLocaleString(undefined,{maximumFractionDigits:1});
+const sessMilesOn=d=>data.sessions.filter(s=>s.date===d).reduce((t,s)=>t+milesOf(s),0);
+const milesForDate=d=>{const o=sessMilesOn(d);return o>0?o:sum(data.shifts.filter(s=>s.date===d),'miles')};
+const perHour=(g,h)=>h>=0.05?money(g/h):'—';
+const clockHoursOn=d=>data.sessions.filter(s=>s.date===d||(d===today()&&!s.end)).reduce((t,s)=>t+workedMs(s)/3600000,0);
+const hoursForDate=d=>{const c=clockHoursOn(d);return c>0?c:sum(data.shifts.filter(s=>s.date===d),'hours')};
+function todaysSessionHours(){return clockHoursOn(today())}
+function updateLiveTimer(){
+ const now=Date.now(),a=activeSession();
+ if($('wTimer')&&data.workoutRun)$('wTimer').textContent=hms(now-Date.parse(data.workoutRun.start));
+ if(!$('clockWorked'))return;
+ $('clockNow').textContent=new Date(now).toLocaleTimeString([],{hour:'numeric',minute:'2-digit',second:'2-digit'});
+ $('clockDate').textContent=new Date(now).toLocaleDateString(undefined,{weekday:'long',month:'long',day:'numeric'});
+ $('clockWorked').textContent=a?hms(workedMs(a,now)):'00:00:00';
+ const b=a&&openBreak(a);
+ if(b){const left=BREAK_MS-(now-Date.parse(b.start));
+  if(left<=0){b.end=new Date(Date.parse(b.start)+BREAK_MS).toISOString();save();return}
+  $('breakLeft').textContent=hms(left).slice(3);$('breakBar').style.width=(100-left/BREAK_MS*100)+'%'}
+}
+function renderClock(){
+ const a=activeSession(),b=a&&openBreak(a),now=Date.now();
+ $('clockStatus').textContent=!a?'CLOCKED OUT':b?'ON BREAK':'WORKING';
+ $('breakBox').classList.toggle('hidden',!b);
+ let meta;
+ if(a){meta='Clocked in at '+fmtTime(a.start)+(a.startMiles!=null?' · started at '+fmtMiles(a.startMiles)+' mi':' · no starting miles');
+  const bm=Math.round(breakMs(a,now)/60000);if(bm)meta+=' · '+bm+' min break';
+  if(now-Date.parse(a.start)>20*3600000)meta+='. This session has been open over 20 hours. Tap Edit this session to set the real clock-out time.'}
+ else{const done=data.sessions.filter(s=>s.date===today());meta=done.length?'Today: '+(done.reduce((t,s)=>t+workedMs(s,now),0)/3600000).toFixed(2)+' hrs worked'+(sessMilesOn(today())>0?' · '+fmtMiles(sessMilesOn(today()))+' mi':''):'Not clocked in.'}
+ $('clockMeta').textContent=meta;
+ $('clockButtons').innerHTML=!a?'<button class="btn big" data-act="in">Clock in</button>':b?'<button class="btn secondary big" data-act="endbreak">Clock back in</button><button class="btn big" data-act="out">End day · clock out</button>':'<button class="btn secondary big" data-act="break">Clock out for lunch</button><button class="btn big" data-act="out">End day · clock out</button>';
+ $('editActiveBtn').classList.toggle('hidden',!a);
+ const rows=data.sessions.slice().sort((x,y)=>String(y.start).localeCompare(String(x.start))).slice(0,7).map(s=>{
+  const bm=Math.round(breakMs(s,now)/60000),mi=milesOf(s);
+  return '<div class="list-item"><div class="row"><b>'+dateLabel(s.date)+'</b><span class="tiny">'+fmtTime(s.start)+' – '+(s.end?fmtTime(s.end):'now')+'</span></div><div class="tiny">'+(workedMs(s,now)/3600000).toFixed(2)+' hrs worked'+(bm?' · '+bm+' min break':'')+(mi?' · '+fmtMiles(mi)+' mi':'')+'</div><div class="actions"><button class="btn secondary small" data-edit-sess="'+escapeHTML(s.id)+'">Edit</button></div></div>'}).join('');
+ $('sessionList').innerHTML=rows||'<div class="empty">No sessions yet.</div>';
+}
+function openModal(html){$('sheet').innerHTML=html;$('modal').classList.remove('hidden');const f=$('sheet').querySelector('input');if(f)setTimeout(()=>f.focus(),60)}
+function closeModal(){$('modal').classList.add('hidden');$('sheet').innerHTML=''}
+const APPS=['Spark','DoorDash','iVueit','Roadie','Instacart','Other'];
+const appOpts=sel=>APPS.map(a=>'<option'+(a===sel?' selected':'')+'>'+a+'</option>').join('');
+const appRows=(main,pays={})=>APPS.map(a=>'<label class="field" style="grid-template-columns:1fr 120px;align-items:center"><span>'+a+(a===main?' (main)':'')+'</span><input type="number" inputmode="decimal" min="0" step="0.01" data-pay="'+a+'" placeholder="$0.00" value="'+(pays[a]??'')+'"></label>').join('');
+const readPays=()=>[...document.querySelectorAll('#sheet [data-pay]')].map(i=>({app:i.dataset.pay,pay:+i.value||0}));
+function syncShifts(s){data.shifts=data.shifts.filter(x=>x.sessionId!==s.id);if(!s.end)return;const h=workedMs(s)/3600000,mi=milesOf(s),main=s.app||(s.apps&&s.apps[0]&&s.apps[0].app)||'Other';
+ (s.apps&&s.apps.length?s.apps:[{app:main,pay:0}]).forEach(x=>data.shifts.push({id:crypto.randomUUID(),sessionId:s.id,app:x.app,date:s.date,pay:x.pay,hours:x.app===main?+h.toFixed(2):0,miles:x.app===main?+mi.toFixed(1):0}))}
+function openMilesModal(kind){
+ const a=activeSession(),isIn=kind==='in';
+ if(isIn&&a)return alert('You are already clocked in.');if(!isIn&&!a)return alert('You are not clocked in.');
+ const pays=!isIn&&a.apps?Object.fromEntries(a.apps.map(x=>[x.app,x.pay])):{};
+ openModal('<h2>'+(isIn?'Clock in':'End day · clock out')+'</h2>'+(isIn?'<label class="field">Which app are you starting with?<select id="mApp">'+appOpts('Spark')+'</select></label>':'')+'<label class="field section-gap">'+(isIn?'Starting odometer (miles)':'Ending odometer (miles)')+'<input id="mMiles" type="number" inputmode="decimal" min="0" step="0.1" placeholder="e.g. 48210"></label>'+(!isIn?'<div class="tiny">Started at '+(a.startMiles!=null?fmtMiles(a.startMiles)+' mi':'(no starting miles)')+' with '+(a.app||'—')+'.</div><div class="eyebrow section-gap">Earnings by app</div><div class="tiny">Enter what you made. Fill in other apps only if you used them.</div>'+appRows(a.app,pays):'')+'<div class="err" id="mErr"></div><div class="actions"><button class="btn big" id="mOk">'+(isIn?'Clock in':'Clock out')+'</button><button class="btn secondary" id="mSkip">'+(isIn?'Clock in without miles':'Clock out without miles')+'</button><button class="btn secondary" id="mCancel">Cancel</button></div>');
+ const go=skip=>{let v=null;
+  if(!skip){const raw=$('mMiles').value.trim();if(raw===''){$('mErr').textContent='Enter your odometer reading, or use the skip button.';return}v=+raw;if(!(v>=0)){$('mErr').textContent='Enter a valid number.';return}}
+  if(isIn)data.sessions.push({id:crypto.randomUUID(),date:today(),start:new Date().toISOString(),end:null,startMiles:v,endMiles:null,app:$('mApp').value,apps:[],breaks:[]});
+  else{if(v!=null&&a.startMiles!=null&&v<a.startMiles){$('mErr').textContent='Ending miles can’t be lower than starting miles ('+fmtMiles(a.startMiles)+').';return}
+   const ob=openBreak(a),now=Date.now();if(ob)ob.end=new Date(Math.min(now,Date.parse(ob.start)+BREAK_MS)).toISOString();a.end=new Date(now).toISOString();a.endMiles=v;
+   a.apps=readPays().filter(x=>x.app===a.app||x.pay>0);syncShifts(a)}
+  closeModal();save()};
+ $('mOk').onclick=()=>go(false);$('mSkip').onclick=()=>go(true);$('mCancel').onclick=closeModal;
+ $('mMiles').addEventListener('keydown',e=>{if(e.key==='Enter')go(false)});
+}
+function openSessionModal(id){
+ const s=id?data.sessions.find(x=>x.id===id):null;if(id&&!s)return;
+ const ymd=iso=>{const d=new Date(iso);return new Date(d.getTime()-d.getTimezoneOffset()*60000).toISOString().slice(0,10)};
+ const hm=iso=>{const d=new Date(iso);return String(d.getHours()).padStart(2,'0')+':'+String(d.getMinutes()).padStart(2,'0')};
+ const pays=s&&s.apps?Object.fromEntries(s.apps.map(x=>[x.app,x.pay])):{};const origBr=s?Math.round(breakMs(s,Date.now())/60000):0;
+ const v={date:s?ymd(s.start):today(),start:s?hm(s.start):'',end:s&&s.end?hm(s.end):'',sm:s&&s.startMiles!=null?s.startMiles:'',em:s&&s.endMiles!=null?s.endMiles:''};
+ openModal('<h2>'+(s?'Edit session':'Add a session')+'</h2><p class="tiny">'+(s?'Fix the times, miles or break.':'Forgot to clock in? Enter what actually happened.')+'</p><div class="formgrid"><label class="field full">Date<input id="eDate" type="date" value="'+v.date+'"></label><label class="field">Clocked in<input id="eIn" type="time" value="'+v.start+'"></label><label class="field">Clocked out<input id="eOut" type="time" value="'+v.end+'"></label><label class="field">Starting miles<input id="eSm" type="number" inputmode="decimal" min="0" step="0.1" value="'+v.sm+'"></label><label class="field">Ending miles<input id="eEm" type="number" inputmode="decimal" min="0" step="0.1" value="'+v.em+'"></label><label class="field full">Break taken (minutes)<input id="eBr" type="number" inputmode="numeric" min="0" step="1" value="'+origBr+'"></label></div><label class="field full" style="margin-top:12px">Main app<select id="eApp">'+appOpts(s&&s.app?s.app:'Spark')+'</select></label><div class="eyebrow section-gap">Earnings by app</div>'+appRows(s&&s.app?s.app:'Spark',pays)+'<div class="tiny section-gap">Leave “Clocked out” empty if you are still working.</div><div class="err" id="eErr"></div><div class="actions"><button class="btn big" id="eSave">Save</button>'+(s?'<button class="btn danger" id="eDel">Delete</button>':'')+'<button class="btn secondary" id="eCancel">Cancel</button></div>');
+ const err=m=>{$('eErr').textContent=m};
+ $('eCancel').onclick=closeModal;
+ if(s)$('eDel').onclick=()=>{if(confirm('Delete this session?')){data.sessions=data.sessions.filter(x=>x!==s);data.shifts=data.shifts.filter(x=>x.sessionId!==s.id);closeModal();save()}};
+ $('eSave').onclick=()=>{
+  const date=$('eDate').value,tin=$('eIn').value,tout=$('eOut').value,nowMs=Date.now()+60000;
+  if(!date||!tin)return err('Enter the date and the time you clocked in.');
+  const start=new Date(date+'T'+tin);let end=null;
+  if(tout){end=new Date(date+'T'+tout);if(end<=start)end=new Date(end.getTime()+86400000)}
+  if(start.getTime()>nowMs)return err('The clock-in time is in the future.');
+  if(end&&end.getTime()>nowMs)return err('The clock-out time is in the future.');
+  if(end&&end-start>24*3600000)return err('That session is longer than 24 hours.');
+  const sm=$('eSm').value.trim(),em=$('eEm').value.trim(),brRaw=$('eBr').value.trim(),br=brRaw===''?0:+brRaw;
+  if((sm!==''&&!(+sm>=0))||(em!==''&&!(+em>=0)))return err('Miles must be valid numbers.');
+  if(!(br>=0))return err('Break must be a valid number of minutes.');
+  if(sm!==''&&em!==''&&+em<+sm)return err('Ending miles can’t be lower than starting miles.');
+  if(!end&&data.sessions.some(x=>!x.end&&x!==s))return err('You already have a session still running. Clock it out first.');
+  if(end&&br*60000>=end-start)return err('The break is longer than the session.');
+  const ns=s||{id:crypto.randomUUID(),breaks:[]};
+  ns.date=ymd(start.toISOString());ns.start=start.toISOString();ns.end=end?end.toISOString():null;
+  ns.startMiles=sm===''?null:+sm;ns.endMiles=em===''?null:+em;ns.app=$('eApp').value;ns.apps=readPays().filter(x=>x.app===ns.app||x.pay>0);
+  if(!s||br!==origBr)ns.breaks=br>0?[{start:ns.start,end:new Date(start.getTime()+br*60000).toISOString()}]:[];
+  if(!s)data.sessions.push(ns);syncShifts(ns);
+  closeModal();save()};
+}
+function coachMsg(){
+ const ymd=d=>new Date(d.getTime()-d.getTimezoneOffset()*60000).toISOString().slice(0,10);
+ const dayDiff=(a,b)=>Math.round((new Date(b+'T12:00:00')-new Date(a+'T12:00:00'))/86400000);
+ const days=dayDiff(data.firstUse||today(),today()),lvl=2;
+ const tags=['ENCOURAGING','STEADY','STRAIGHT'];
+ const ds=data.shifts.filter(s=>s.date===today()),sessH=todaysSessionHours(),gross=sum(ds,'pay'),hours=hoursForDate(today());
+ const goal=+data.settings.daily||0,tH=+data.settings.hours||0,mH=+data.settings.minimum||0,hr=new Date().getHours();
+ const ws=weekStart(),pw=new Date(ws+'T12:00:00');pw.setDate(pw.getDate()-7);const pws=ymd(pw);
+ const wk=sum(data.shifts.filter(s=>s.date>=ws),'pay'),lw=sum(data.shifts.filter(s=>s.date>=pws&&s.date<ws),'pay');
+ const dates=data.shifts.map(s=>s.date).concat(data.sessions.map(s=>s.date)).sort();
+ const last=dates[dates.length-1],gap=last?dayDiff(last,today()):null;
+ const pick=a=>a[lvl],short=money(Math.max(0,goal-gross));
+ let msg;
+ if(gap===null)msg=pick(["Welcome. Start with one session or one logged shift today. That’s enough.","Nothing logged yet. Log your first shift today.","Nothing logged yet. Log a shift today. That’s the whole job."]);
+ else if(gap>=3&&!ds.length&&!sessH)msg=pick(["Welcome back. No guilt, just start again with one session today.","It’s been "+gap+" days. Restart today with one session.",""+gap+" days with nothing logged. No excuses needed, just get back out there today."]);
+ else if(goal>0&&gross>=goal)msg=pick(["You hit your goal today. Nice work. Take a second to feel that.","Goal hit: "+money(gross)+". This is how it gets built.","Goal hit. Now do it again tomorrow. Consistency is the point."]);
+ else if(tH>0&&hours>=tH)msg=pick(["Full hours in. You’re "+short+" short, so check the Earnings tab for what paid best.","Hours done, "+short+" short of goal. Look at where the time paid least.","Hours are in but you’re "+short+" short. The hours aren’t the problem, how you spent them is."]);
+ else if(mH>0&&hours>=mH)msg=pick(["Good progress. "+short+" to go and you’ve got this.",short+" to goal. One more solid stretch gets you there.",short+" short. Finish it. Don’t coast."]);
+ else if(hours>0)msg=pick(["You’re moving. Keep going until you reach "+mH+" hours.","You’ve started. Get to "+mH+" hours before you think about stopping.","Not at "+mH+" hours yet. Keep working."]);
+ else if(hr<11)msg=pick(["New day. One session is all it takes to start.","The day’s open. Clock in.","Clock in now. Don’t negotiate with yourself."]);
+ else msg=pick(["It’s not too late. Even a minimum day counts.","The clock’s moving and nothing’s logged. Clock in and get going.","Nothing logged and the day is slipping. Start now or run a minimum day, but do something."]);
+ let sub='Week so far: '+money(wk)+(lw?' · last week: '+money(lw):'');
+ if(lw&&wk>lw)sub+=' · ahead of last week';
+ return{msg,sub,tag:tags[lvl]};
+}
+function renderCoach(){const c=coachMsg();$('coachMsg').textContent=c.msg;$('coachSub').textContent=c.sub;$('coachTone').textContent=c.tag}
+function renderChecklist(){const c=data.checks[today()]||{};$('dailyChecks').innerHTML=data.checklist.map((t,i)=>'<div class="checkrow"><label style="flex:1;display:flex;gap:10px;align-items:center"><input type="checkbox" data-check="'+escapeHTML(t.id)+'"'+(c[t.id]?' checked':'')+'> '+escapeHTML(t.text)+'</label><button class="btn secondary small" data-ck="up" data-i="'+i+'" aria-label="Move up">↑</button><button class="btn secondary small" data-ck="edit" data-i="'+i+'" aria-label="Rename">✎</button><button class="btn secondary small" data-ck="del" data-i="'+i+'" aria-label="Delete">×</button></div>').join('')||'<div class="empty">No tasks yet. Add one below.</div>';$('checkCount').textContent=data.checklist.filter(t=>c[t.id]).length+' / '+data.checklist.length}
+function workStreak(){const days=new Set(data.shifts.map(x=>x.date).concat(data.sessions.map(x=>x.date)));let n=0,d=new Date();const f=x=>new Date(x.getTime()-x.getTimezoneOffset()*60000).toISOString().slice(0,10);if(!days.has(f(d)))d.setDate(d.getDate()-1);while(days.has(f(d))){n++;d.setDate(d.getDate()-1)}return n}
+function renderExtras(){const st=data.settings,cpm=(st.gas||0)/(st.mpg||25),td=today(),mi=milesForDate(td),ex=data.expenses.filter(e=>e.date===td),lg=sum(ex.filter(e=>e.type==='Gas'),'amount'),other=sum(ex,'amount')-lg,gas=lg>0?lg:mi*cpm,gross=sum(data.shifts.filter(x=>x.date===td),'pay'),net=gross-gas-other,h=hoursForDate(td);
+ $('todayNet').textContent=money(net);$('netNote').textContent='After '+money(gas)+' gas'+(lg>0?' (logged)':' (estimated)')+(other?' and '+money(other)+' expenses':'')+(h>=0.05?' · '+money(net/h)+'/hr':'');
+ $('streakNum').textContent=workStreak();$('mpg').value=st.mpg||25;$('gasPrice').value=st.gas||'';
+ const r=data.workoutRun;$('wStatus').textContent=r?'RUNNING':'READY';$('wToggle').textContent=r?'Stop & save workout':'Start workout';
+ $('wTimer').textContent=r?hms(Date.now()-Date.parse(r.start)):'00:00:00'}
+function renderJournalLists(){
+ const labels={entry:'Journal',work:'Work',workout:'Working out',day:'My day',personal:'Personal',win:'Proud of',next:'Do better tomorrow'};
+ const rows=Object.keys(data.journals).filter(d=>d!==today()).sort().reverse().slice(0,14).map(d=>{const e=data.journals[d]||{};
+  const parts=Object.keys(labels).filter(k=>e[k]&&String(e[k]).trim()).map(k=>'<div class="section-gap"><div class="eyebrow">'+labels[k]+'</div><div class="tiny" style="color:#e4e0d8;white-space:pre-wrap">'+escapeHTML(e[k])+'</div></div>').join('');
+  return parts?'<details class="list-item"><summary>'+dateLabel(d)+'</summary>'+parts+'</details>':''}).filter(Boolean);
+ $('journalHistory').innerHTML=rows.length?rows.join(''):'<div class="empty">Past entries will show up here.</div>';
+ const ms=(data.moods||[]).slice().sort((a,b)=>String(b.time).localeCompare(String(a.time))).slice(0,10);
+ $('moodList').innerHTML=ms.length?ms.map(m=>'<div class="list-item"><div class="row"><strong>'+escapeHTML(m.feeling)+'</strong><span class="tiny">'+dateLabel(m.date)+' \u00b7 '+new Date(m.time).toLocaleTimeString([],{hour:'numeric',minute:'2-digit'})+'</span></div>'+(m.why?'<div class="tiny" style="color:#e4e0d8;margin-top:6px;white-space:pre-wrap">'+escapeHTML(m.why)+'</div>':'')+'<div class="actions" style="margin-top:8px"><button class="btn secondary" data-del-mood="'+escapeHTML(m.id)+'" style="min-height:36px;padding:6px 12px">Delete</button></div></div>').join(''):'<div class="empty">No check-ins yet.</div>';
+}
+function render(){
+ const ds=data.shifts.filter(s=>s.date===today()),gross=sum(ds,'pay'),hours=hoursForDate(today()),miles=milesForDate(today());
+ const dayExpenses=data.expenses.filter(e=>e.date===today()),dayCosts=sum(dayExpenses,'amount'),goal=+data.settings.daily||0;
+ $('todayNet').textContent=money(gross-dayCosts);$('todayHours').textContent=hours.toFixed(1);$('todayMiles').textContent=miles.toFixed(1);$('todayMilesSub').textContent=sessMilesOn(today())>0?'From odometer':'Business miles';$('todayGross').textContent=money(gross);$('todayRate').textContent=perHour(gross,hours);
+ $('goalBar').style.width=Math.min(100,goal?gross/goal*100:0)+'%';$('goalText').textContent=money(gross)+' / '+money(goal)+' gross goal';$('goalPct').textContent=(goal?Math.round(gross/goal*100):0)+'%';
+ $('dayStatus').textContent=hours>=+data.settings.hours?'TARGET HIT':hours>=+data.settings.minimum?'MINIMUM MET':hours?'IN PROGRESS':'NOT STARTED';
+ $('hoursGoal').value=data.settings.hours;$('dailyGoal').value=data.settings.daily;$('minimumHours').value=data.settings.minimum;
+ renderChecklist();
+ $('streak').textContent=new Set(data.shifts.filter(s=>s.date>=weekStart()).map(s=>s.date)).size;
+ const m=data.shifts.filter(s=>s.date.startsWith(month())),me=data.expenses.filter(e=>e.date.startsWith(month())),mg=sum(m,'pay'),mh=sum(m,'hours'),mc=sum(me,'amount');
+ $('monthGross').textContent=money(mg);$('monthNet').textContent=money(mg-mc);$('monthHours').textContent=mh.toFixed(1);$('netHour').textContent=money(mh?(mg-mc)/mh:0);
+ const apps=['Spark','DoorDash','iVueit','Roadie','Instacart','Other'];
+ $('appCompare').innerHTML=apps.map(a=>{let ar=m.filter(s=>s.app===a),ex=me.filter(e=>e.app===a),p=sum(ar,'pay'),c=sum(ex,'amount'),h=sum(ar,'hours'),mi=sum(ar,'miles');return `<div class="list-item"><div class="row"><b>${a}</b><b class="mint">${money(p-c)}</b></div><div class="tiny">${money(p)} gross · ${h.toFixed(1)} hrs · ${mi.toFixed(1)} mi · ${money(c)} expenses</div></div>`}).join('');
+ $('shiftCount').textContent=data.shifts.length+' shifts';
+ $('shiftList').innerHTML=data.shifts.slice().sort((a,b)=>b.date.localeCompare(a.date)).slice(0,20).map(s=>`<div class="list-item"><div class="row"><b>${escapeHTML(s.app)} · ${dateLabel(s.date)}</b><b>${money(s.pay)}</b></div><div class="tiny">${s.hours} hrs · ${s.miles} mi</div><div class="actions"><button class="btn danger small" data-delete-shift="${s.id}">Delete shift</button></div></div>`).join('')||'<div class="empty">No shifts logged yet.</div>';
+ const totalExp=sum(me,'amount'),fuel=sum(me.filter(e=>e.type==='Gas'),'amount');
+ $('expenseMonth').textContent=money(totalExp);$('fuelMonth').textContent=money(fuel);$('billTotal').textContent=money(sum(data.bills,'amount'));$('expenseNet').textContent=money(mg-totalExp);
+ $('expenseList').innerHTML=data.expenses.slice().sort((a,b)=>b.date.localeCompare(a.date)).slice(0,30).map(e=>`<div class="list-item"><div class="row"><b>${escapeHTML(e.type)} · ${dateLabel(e.date)}</b><b class="gold">${money(e.amount)}</b></div><div class="tiny">${escapeHTML(e.app||'General')}${e.note?' · '+escapeHTML(e.note):''}</div><div class="actions"><button class="btn danger small" data-delete-expense="${e.id}">Delete expense</button></div></div>`).join('')||'<div class="empty">No expenses logged yet.</div>';
+ $('billList').innerHTML=data.bills.map(b=>`<div class="list-item row"><span>${escapeHTML(b.name)}</span><b>${money(b.amount)}</b><button class="btn danger small" data-delete-bill="${b.id}">×</button></div>`).join('')||'<div class="empty">No monthly bills entered.</div>';
+ updateLiveTimer();renderClock();renderExtras();renderCoach();renderJournalLists();
+ $('workoutCount').textContent=data.training.filter(t=>t.date.startsWith(month())).length;$('totalWorkouts').textContent=data.training.length;
+ $('trainList').innerHTML=data.training.slice().sort((a,b)=>b.date.localeCompare(a.date)).slice(0,20).map(t=>`<div class="list-item"><div class="row"><b>${escapeHTML(t.exercise)}</b><span class="tiny">${dateLabel(t.date)}</span></div><div class="tiny">${t.secs!=null?hms(t.secs*1000):t.sets+' sets × '+t.reps+' reps / seconds'}${t.notes?' · '+escapeHTML(t.notes):''}</div><div class="actions"><button class="btn danger small" data-delete-training="${t.id}">Delete</button></div></div>`).join('')||'<div class="empty">No workouts logged yet.</div>';
+ $('saved').value=data.saved;$('target').value=data.target;let pct=Math.min(100,data.target?data.saved/data.target*100:0);$('savingsBar').style.width=pct+'%';$('savingsProgress').textContent=money(data.saved)+' saved of '+money(data.target)+' target · '+pct.toFixed(1)+'%';
+ const wk=data.shifts.filter(s=>s.date>=weekStart());const weekDates=[...new Set(wk.map(x=>x.date).concat(data.sessions.filter(x=>x.date>=weekStart()).map(x=>x.date)))];const weekMiles=weekDates.reduce((t,d)=>t+milesForDate(d),0),weekHours=weekDates.reduce((t,d)=>t+hoursForDate(d),0);$('weekRate').textContent=perHour(sum(wk,'pay'),weekHours);const dayRows=weekDates.slice().sort().reverse().map(d=>{const g=sum(wk.filter(x=>x.date===d),'pay'),h=hoursForDate(d);return '<div class="list-item"><div class="row"><b>'+new Date(d+'T12:00:00').toLocaleDateString(undefined,{weekday:'short',month:'short',day:'numeric'})+'</b><b class="mint">'+(h>0?perHour(g,h)+'/hr':'no hours logged')+'</b></div><div class="tiny">'+money(g)+' gross · '+h.toFixed(1)+' hrs</div></div>'}).join('')||'<div class="empty">No days logged this week yet.</div>';$('weeklyReview').innerHTML=`<div class="grid"><div class="stat"><div class="eyebrow">Gross</div><div class="value">${money(sum(wk,'pay'))}</div></div><div class="stat"><div class="eyebrow">Hours</div><div class="value">${weekHours.toFixed(1)}</div></div><div class="stat"><div class="eyebrow">Miles</div><div class="value">${weekMiles.toFixed(1)}</div></div><div class="stat"><div class="eyebrow">Work days</div><div class="value">${new Set(wk.map(s=>s.date)).size}</div></div><div class="stat"><div class="eyebrow">Avg per hour</div><div class="value mint">${perHour(sum(wk,'pay'),weekHours)}</div></div></div><h3 style="margin:18px 0 4px">By day</h3>${dayRows}<p class="tiny">Week starts Monday. Look for patterns, not perfection.</p>`;
+ document.querySelectorAll('[data-delete-shift]').forEach(b=>b.onclick=()=>{if(confirm('Delete this shift?')){data.shifts=data.shifts.filter(s=>s.id!==b.dataset.deleteShift);save()}});
+ document.querySelectorAll('[data-delete-expense]').forEach(b=>b.onclick=()=>{if(confirm('Delete this expense?')){data.expenses=data.expenses.filter(e=>e.id!==b.dataset.deleteExpense);save()}});
+ document.querySelectorAll('[data-delete-bill]').forEach(b=>b.onclick=()=>{data.bills=data.bills.filter(x=>x.id!==b.dataset.deleteBill);save()});
+ document.querySelectorAll('[data-delete-training]').forEach(b=>b.onclick=()=>{data.training=data.training.filter(x=>x.id!==b.dataset.deleteTraining);save()});
+}
+init();startSync();
+if('serviceWorker' in navigator)window.addEventListener('load',()=>navigator.serviceWorker.register('sw.js').catch(()=>{}));
+</script>
+</body></html>
